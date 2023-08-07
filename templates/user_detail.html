@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+    User Details
+{% endblock %}
+
+{% block css_js %}
+
+{% endblock %}
+
+
+
+{% block body %}
+    <div class="container pt-5" style="background-color: #f1f1f1;">
+        <div style="max-width: 760px;margin: auto">
+            <h1>User Account Management</h1>
+            <form id="updateForm" method="post" action="/userDetail">
+                <div class="form-group py-2">
+                    <label for="username">Username</label>
+                    <input type="text" class="form-control" id="username" name="username" value="{{ user_detail['username'] }}" disabled required>
+                </div>
+                <div class="form-group py-2">
+                    <label for="email">Email</label>
+                    <input type="email" class="form-control" id="email" name="email" value="{{ user_detail['email'] }}" disabled required>
+                </div>
+                <div class="form-group py-2">
+                    <label for="firstName">First Name</label>
+                    <input type="text" class="form-control" id="firstName" name="firstName" value="{{ user_detail['S.first_name'] if is_staff == 1 else user_detail['first_name'] }}" disabled required>
+                </div>
+                <div class="form-group py-2">
+                    <label for="lastName">Last Name</label>
+                    <input type="text" class="form-control" id="lastName" name="lastName" value="{{ user_detail['S.last_name'] if is_staff == 1 else user_detail['last_name'] }}" disabled required>
+                </div>
+                <div class="form-group py-2">
+                    <label for="birthdate">Birthdate</label>
+                    <input type="date" class="form-control" id="birthdate" name="birthdate" value="{{ user_detail['S.birthdate'] if is_staff == 1 else user_detail['birthdate'] }}" disabled required>
+                </div>
+                <div class="form-group py-2">
+                    <label for="address">Address</label>
+                    <input type="text" class="form-control" id="address" name="address" value="{{ user_detail['S.address'] if is_staff == 1 else user_detail['address'] }}" disabled required>
+                </div>
+                <div class="form-group py-2">
+                    <label for="phoneNumber">Phone Number</label>
+                    <input type="text" class="form-control" id="phoneNumber" name="phoneNumber" value="{{ user_detail['S.phone_number'] if is_staff == 1 else user_detail['phone_number'] }}" disabled required>
+                </div>
+                <p id="msg" class="pt-3">{{ msg }}</p>
+                <button type="button" class="btn btn-primary my-3" id="Change">Change Details</button>
+                <button type="submit" class="btn btn-primary my-3" id="Update" style="display: none">Update Details</button>
+                <button type="reset" class="btn btn-primary my-3" id="Cancel" style="display: none">Cancel</button>
+            </form>
+            <form id="updateForm" method="post" action="/userDetail">
+                <div id="password_" style="display: none">
+                    <div class="form-group py-2">
+                        <label for="old_password">Old Password</label>
+                        <input type="password" class="form-control" id="old_password" name="old_password" required>
+                    </div>
+                    <div class="form-group py-2">
+                        <label for="new_password">New Password</label>
+                        <input type="password" class="form-control" id="new_password" name="new_password" required>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-primary my-3" id="ChangePW">Change Password</button>
+                <button type="submit" class="btn btn-primary my-3" id="UpdatePW" style="display: none">Update Password</button>
+                <button type="reset" class="btn btn-primary my-3" id="CancelPW" style="display: none">Cancel</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+
+{% block myjs %}
+    <script>
+        const address = document.getElementById('address');
+        const Update = document.getElementById('Update');
+        const Change = document.getElementById('Change');
+        const Cancel = document.getElementById('Cancel');
+        const password_ = document.getElementById('password_');
+        const username = document.getElementById('username');
+        const email = document.getElementById('email');
+        const firstName = document.getElementById('firstName');
+        const lastName = document.getElementById('lastName');
+        const birthdate = document.getElementById('birthdate');
+        const phoneNumber = document.getElementById('phoneNumber');
+        const msg = document.getElementById('msg');
+        const ChangePW = document.getElementById('ChangePW');
+        const UpdatePW = document.getElementById('UpdatePW');
+        const CancelPW = document.getElementById('CancelPW');
+        Change.addEventListener('click', function () {
+            Update.style.display = '';
+            Cancel.style.display = '';
+            Change.disabled = true;
+            username.disabled = '';
+            email.disabled = '';
+            firstName.disabled = '';
+            lastName.disabled = '';
+            birthdate.disabled = '';
+            address.disabled = '';
+            phoneNumber.disabled = '';
+            msg.innerText = '';
+        });
+        Cancel.addEventListener('click', function () {
+            Update.style.display = 'none';
+            Cancel.style.display = 'none';
+            Change.disabled = false;
+            username.disabled = 'none';
+            email.disabled = 'none';
+            firstName.disabled = 'none';
+            lastName.disabled = 'none';
+            birthdate.disabled = 'none';
+            address.disabled = 'none';
+            phoneNumber.disabled = 'none';
+        });
+        ChangePW.addEventListener('click', function () {
+            UpdatePW.style.display = '';
+            CancelPW.style.display = '';
+            ChangePW.style.display = 'none';
+            password_.style.display = '';
+            msg.innerText = '';
+        });
+        CancelPW.addEventListener('click', function () {
+            UpdatePW.style.display = 'none';
+            CancelPW.style.display = 'none';
+            ChangePW.style.display = '';
+            password_.style.display = 'none';
+        });
+    </script>
+{% endblock %}

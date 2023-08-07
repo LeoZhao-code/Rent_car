@@ -1,0 +1,258 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+    User Edit
+{% endblock %}
+
+{% block css_js %}
+    <style>
+    </style>
+{% endblock %}
+
+{% block body %}
+
+    {% if staff_list != None %}
+
+        <div class="container py3">
+            <br>
+            <div class="container">
+                <h5 style="display: flex; justify-content: center; align-items: center; color: red">{{ msg }}</h5>
+            </div>
+            <h4>Staff List</h4>
+            <table class="table table-striped table-hover">
+                <thead class="table-secondary">
+                <tr>
+                    <th scope="col">Staff Number</th>
+                    <th scope="col">Username</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">First Name</th>
+                    <th scope="col">Last Name</th>
+                    <th scope="col">Birthdate</th>
+                    <th scope="col">Address</th>
+                    <th scope="col">Phone Number</th>
+                    <th scope="col">EDIT</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for i in range(staff_list|length) %}
+                    <tr>
+                        <td>{{ staff_list[i]['staff_number'] }}</td>
+                        <td>{{ staff_list[i]['username'] }}</td>
+                        <td>{{ staff_list[i]['email'] }}</td>
+                        <td>{{ staff_list[i]['first_name'] }}</td>
+                        <td>{{ staff_list[i]['last_name'] }}</td>
+                        <td>{{ staff_list[i]['birthdate'] }}</td>
+                        <td>{{ staff_list[i]['address'] }}</td>
+                        <td>{{ staff_list[i]['phone_number'] }}</td>
+                        <td>
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" onclick="openModal({{ i }}, 0)">EDIT</button>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        <button type="button" class="btn btn-primary mx-4" data-bs-toggle="modal" data-bs-target="#exampleModal" onclick="showLink(0)">Add Staff</button>
+        </div>
+    {% endif %}
+
+
+    <div class="container py3">
+        <br>
+        <h4>Customer List</h4>
+        <table class="table table-striped table-hover">
+            <thead class="table-secondary">
+            <tr>
+                <th scope="col">customers Number</th>
+                <th scope="col">Username</th>
+                <th scope="col">Email</th>
+                <th scope="col">First Name</th>
+                <th scope="col">Last Name</th>
+                <th scope="col">Birthdate</th>
+                <th scope="col">Address</th>
+                <th scope="col">Phone Number</th>
+                {% if is_superuser == 1 %}
+                    <th scope="col">EDIT</th>
+                {% endif %}
+            </tr>
+            </thead>
+            <tbody>
+            {% for i in range(customers_list|length) %}
+                <tr>
+                    <td>{{ customers_list[i]['customer_number'] }}</td>
+                    <td>{{ customers_list[i]['username'] }}</td>
+                    <td>{{ customers_list[i]['email'] }}</td>
+                    <td>{{ customers_list[i]['first_name'] }}</td>
+                    <td>{{ customers_list[i]['last_name'] }}</td>
+                    <td>{{ customers_list[i]['birthdate'] }}</td>
+                    <td>{{ customers_list[i]['address'] }}</td>
+                    <td>{{ customers_list[i]['phone_number'] }}</td>
+                    {% if is_superuser == 1 %}
+                        <td>
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" onclick="openModal({{ i }}, 1)">EDIT</button>
+                        </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    <button type="button" class="btn btn-primary mx-3" data-bs-toggle="modal" data-bs-target="#exampleModal" onclick="showLink(1)">Add Customer</button>
+    </div>
+
+
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">User Detail</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="pt-3 pb-3">
+                        <div class="container w-75">
+                            <form action="/userList" method="post" id="myForm" onsubmit="return validateForm()">
+                                <div class="form-group py-2">
+                                    <label for="username">Username:</label>
+                                    <input type="text" class="form-control" id="username" name="username" placeholder="Enter Username" required>
+                                </div>
+                                <div class="form-group py-2">
+                                    <label for="email">Email:</label>
+                                    <input type="email" class="form-control" id="email" name="email" placeholder="Enter Email" required>
+                                </div>
+                                <div class="form-group py-2" id="PW">
+                                    <label for="password">Password:</label>
+                                    <input type="password" class="form-control" id="password" name="password" placeholder="Enter Password">
+                                </div>
+                                <div class="form-group py-2">
+                                    <label for="firstName">First Name:</label>
+                                    <input type="text" class="form-control" id="firstName" name="firstName" placeholder="Enter First Name" required>
+                                </div>
+                                <div class="form-group py-2">
+                                    <label for="lastName">Last Name:</label>
+                                    <input type="text" class="form-control" id="lastName" name="lastName" placeholder="Enter Last Name" required>
+                                </div>
+                                <div class="form-group py-2">
+                                    <label for="birthdate">Birthdate:</label>
+                                    <input type="date" class="form-control" id="birthdate" name="birthdate" min="1900-01-01" max="2023-08-08" required>
+                                </div>
+                                <div class="form-group py-2">
+                                    <label for="address">Address:</label>
+                                    <input type="text" class="form-control" id="address" name="address" placeholder="Enter Address" required>
+                                </div>
+                                <div class="form-group py-2">
+                                    <label for="phone_number">Phone Number: (02********)</label>
+                                    <input type="tel" class="form-control" id="phone_number" name="phone_number" placeholder="Enter Phone Number" required><br>
+                                </div>
+                                <input type="hidden" id="userID" name="userID" value="">
+                                <input type="hidden" id="isStaff" name="isStaff" value="">
+                                <button type="submit" class="btn btn-primary">Submit</button>
+                                <a class="btn btn-danger" id="delete_data" onclick="confirmDelete()">Delete</a>
+
+
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block myjs %}
+    <script>
+        const modal = document.getElementById('exampleModal');
+        modal.addEventListener('shown.bs.modal', function () {
+        });
+
+        const username = document.getElementById('username');
+        const email = document.getElementById('email');
+        const firstName = document.getElementById('firstName');
+        const lastName = document.getElementById('lastName');
+        const birthdate = document.getElementById('birthdate');
+        const address = document.getElementById('address');
+        const phone_number = document.getElementById('phone_number');
+        const userID = document.getElementById('userID');
+        const delete_data = document.getElementById('delete_data');
+        const isStaff = document.getElementById('isStaff');
+        const PW = document.getElementById('PW');
+        const password = document.getElementById('password');
+        const staffList = JSON.parse('{{ staff_list|tojson }}');
+        const customersList = JSON.parse('{{ customers_list|tojson }}');
+
+
+        function openModal(userId, is_staff) {
+            if (is_staff === 0){
+                username.value = staffList[userId]['username'];
+                email.value = staffList[userId]['email'];
+                firstName.value = staffList[userId]['first_name'];
+                lastName.value = staffList[userId]['last_name'];
+                birthdate.value = staffList[userId]['birthdate'];
+                address.value = staffList[userId]['address'];
+                phone_number.value = staffList[userId]['phone_number'];
+                delete_data.style.display = 'inline';
+                userID.value = staffList[userId]['user_id'];
+                PW.style.display = 'none';
+                password.required = false;
+            }else{
+                username.value = customersList[userId]['username'];
+                email.value = customersList[userId]['email'];
+                firstName.value = customersList[userId]['first_name'];
+                lastName.value = customersList[userId]['last_name'];
+                birthdate.value = customersList[userId]['birthdate'];
+                address.value = customersList[userId]['address'];
+                phone_number.value = customersList[userId]['phone_number'];
+                delete_data.style.display = 'inline';
+                userID.value = customersList[userId]['user_id'];
+                PW.style.display = 'none';
+                password.required = false;
+            }
+            isStaff.value =is_staff;
+        }
+        function showLink(is_staff){
+            username.value = '';
+            email.value = '';
+            firstName.value = '';
+            lastName.value = '';
+            birthdate.value = '';
+            address.value = '';
+            phone_number.value = '';
+            delete_data.style.display = 'none';
+            isStaff.value = is_staff;
+            userID.value = '';
+            PW.style.display = 'inline';
+            password.required = true;
+        }
+        function confirmDelete() {
+            const result = confirm("You sure you want to delete it?");
+            if (result) {
+                window.location.href = "/deleteUser?isStaff=" + isStaff.value + "&userID=" + userID.value;
+            }
+        }
+
+        function validateForm(){
+            const namePattern = /^[a-zA-Z]+$/;
+            const phonePattern = /^(02\d{7,9}|\+642\d{7,9}|\+64-2\d{7,9})$/;
+
+            if (password.length < 6) {
+                alert("Password requires at least 6 characters.");
+                return false;
+            }
+            if (!namePattern.test(firstName.value)) {
+                alert("First name should contain only letters.");
+                return false;
+            }
+            if (!namePattern.test(lastName.value)) {
+                alert("Last name should contain only letters.");
+                return false;
+            }
+            if (!phonePattern.test(phoneNumber.value)) {
+                alert("Please enter a valid phone number.");
+                return false;
+            }
+            return true;
+        }
+    </script>
+{% endblock %}

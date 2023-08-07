@@ -1,0 +1,96 @@
+{% extends "login_base.html" %}
+
+{% block title %}
+    User Registration
+{% endblock %}
+
+{% block content %}
+    <h1 class="py-5">User Registration</h1>
+    <form id="registrationForm" action="/register" onsubmit="return validateForm()" method="post">
+        <div class="form-group">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required><br>
+        </div>
+
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required><br>
+        </div>
+
+        <div class="form-group">
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required><br>
+        </div>
+
+        <div class="form-group">
+            <label for="first_name">First Name:</label>
+            <input type="text" id="first_name" name="first_name" required><br>
+        </div>
+
+        <div class="form-group">
+            <label for="last_name">Last Name:</label>
+            <input type="text" id="last_name" name="last_name" required><br>
+        </div>
+
+        <div class="form-group">
+            <label for="birthdate">Birthdate:</label>
+            <input type="date" id="birthdate" name="birthdate" min="1900-01-01" max="2023-08-08" required><br>
+        </div>
+
+        <div class="form-group">
+            <label for="address">Address:</label>
+            <input type="text" id="address" name="address" required><br>
+        </div>
+
+        <div class="form-group">
+            <label for="phone_number">Phone Number:(02********)</label>
+            <input type="tel" id="phone_number" name="phone_number" required><br>
+        </div>
+
+        <div class="form-group pb-5">
+            <p>{{ msg }}</p>
+            <input class="btn btn-primary" type="submit" value="Register">
+            <span class="px-3">Already have an account?</span>
+            <a class="btn btn-primary" href="{{ url_for('login') }}">Go Login</a>
+        </div>
+    </form>
+
+    <script>
+        function validateForm() {
+            const username = document.getElementById("username").value;
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+            const firstName = document.getElementById("first_name").value;
+            const lastName = document.getElementById("last_name").value;
+            const phoneNumber = document.getElementById("phone_number").value;
+            const namePattern = /^[a-zA-Z]+$/;
+            const phonePattern = /^(02\d{7,9}|\+642\d{7,9}|\+64-2\d{7,9})$/;
+
+            if (username === "") {
+                alert("Please enter a username.");
+                return false;
+            }
+            if (email === "") {
+                alert("Please enter a email.");
+                return false;
+            }
+            if (password.length < 6) {
+                alert("Password requires at least 6 characters.");
+                return false;
+            }
+            if (!namePattern.test(firstName)) {
+                alert("First name should contain only letters.");
+                return false;
+            }
+            if (!namePattern.test(lastName)) {
+                alert("Last name should contain only letters.");
+                return false;
+            }
+            if (!phonePattern.test(phoneNumber)) {
+                alert("Please enter a valid phone number.");
+                return false;
+            }
+            return true;
+        }
+    </script>
+{% endblock %}

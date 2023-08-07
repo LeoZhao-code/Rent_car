@@ -1,0 +1,367 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+    Car List
+{% endblock %}
+
+{% block css_js %}
+    <style>
+        .product-box {
+            height: 100%;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            padding: 10px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .product-img {
+            width: 100%;
+            object-fit: cover;
+            border-radius: 8px;
+            display: block;
+        }
+
+        p {
+            font-size: 15px;
+            margin: auto;
+            padding-top: 10px;
+        }
+        .car-box{
+            width: 960px;margin: auto
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="container mt-3 pt-3" style="background-color: #f1f3f4;">
+        <h4 class="car-box">Car List</h4>
+        {% if is_staff == 1 or is_superuser == 1 %}
+            {{ msg }}
+            <div class="car-box  pt-3">
+                <form class="search-form" action="/carList" method="post">
+                    <div class="row justify-content-center align-items-center">
+                        <div class="col-2">
+                            <div class="form-group py-3">
+                                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" onclick="showLink()">Add a new car</button>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="form-group py-3">
+                                <input type="text" class="form-control" id="search-value" placeholder="Search" name="search-value">
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div class="form-group py-3">
+                                <button class="btn btn-primary" id="search_button" type="submit">Search</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        {% endif %}
+        <div class="row pt-4">
+            {% for i in range(car_list|length) %}
+                <div class="col-md-12 mb-4 product-box car-box">
+                {% if is_staff == 1 or is_superuser == 1 %}
+                    <div class="row">
+                {% else %}
+                    <div class="row" data-bs-toggle="modal" data-bs-target="#exampleModal" onclick="openModal({{ i }})">
+                {% endif %}
+                        <div class="col-md-7">
+                            <div class="product-info">
+                                <h5>{{ car_list[i]['year'] }} {{ car_list[i]['brand'] + ' ' + car_list[i]['model'] }}</h5>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <p>Fuel type : {{ car_list[i]['fuel_type'] }}</p>
+                                        <p>Transmission : {{ car_list[i]['transmission'] }}</p>
+                                        <p>Seating Capacity : {{ car_list[i]['seating_capacity'] }}</p>
+                                        <p>Vehicle Type : {{ car_list[i]['vehicle_type'] }}</p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <p>Rental Price : {{ car_list[i]['rental_price'] }} / Day</p>
+                                        <p>Registration number : {{ car_list[i]['registration_number'] }}</p>
+                                        <p>Color : {{ car_list[i]['color'] }}</p>
+                                        <p>Location : {{ car_list[i]['city'] }}</p>
+                                    </div>
+                                    {% if is_staff == 1 or is_superuser == 1 %}
+                                        <div class="col-md-4 pt-3">
+                                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" onclick="openModal_({{ i }})">Edit
+                                            </button>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-5" style="position: relative;">
+                            <img src="{{ car_list[i]['image_url'] }}" class="img-fluid product-img" alt="No Picture yet." style="height: 180px;">
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <nav aria-label="Page navigation example">
+            <ul class="pagination justify-content-center">
+                {% if car_count != 1%}
+                    <span class="pt-2 px-3">Current page {{ page }}</span>
+                    {% for i in range(car_count) %}
+                        {% if search == None and car_location == None %}
+                            <li class="page-item"><a class="page-link" href="{{ url_for('car_list') }}?page={{ i + 1 }}">{{ i + 1 }}</a></li>
+                        {% elif search != None and car_location == None %}
+                            <li class="page-item"><a class="page-link" href="{{ url_for('car_list') }}?page={{ i + 1 }}&search={{ search }}">{{ i + 1 }}</a></li>
+                        {% elif search == None and car_location != None %}
+                            <li class="page-item"><a class="page-link" href="{{ url_for('car_list') }}?page={{ i + 1 }}&location={{ car_location }}">{{ i + 1 }}</a></li>
+                        {% else %}
+                            <li class="page-item"><a class="page-link" href="{{ url_for('car_list') }}?page={{ i + 1 }}&search={{ search }}&location={{ car_location }}">{{ i + 1 }}</a></li>
+                        {% endif %}
+                    {% endfor %}
+                {% else %}
+                    <li class="item">1</li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+
+
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Car Detail</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="pt-3 pb-3">
+                            <div class="container w-75">
+                                {% if is_staff == 1 or is_superuser == 1 %}
+                                    <form action="/editCar" method="post" enctype="multipart/form-data"  onsubmit="return validateForm()">
+                                        <div class="form-group py-2">
+                                            <label for="brand_">Brand :</label>
+                                            <input type="text" class="form-control" id="brand_" name="brand_" required>
+                                        </div>
+                                        <div class="form-group py-2">
+                                            <label for="model_">Model :</label>
+                                            <input type="text" class="form-control" id="model_" name="model_" required>
+                                        </div>
+                                        <div class="form-group py-2">
+                                            <label for="year_">Year :</label>
+                                            <input type="text" class="form-control" id="year_" name="year_" required>
+                                        </div>
+                                        <div class="form-group py-2">
+                                            <label for="fuel_type_">Fuel Type :</label>
+                                            <input type="text" class="form-control" id="fuel_type_" name="fuel_type_" required>
+                                        </div>
+                                        <div class="form-group py-2">
+                                            <label for="transmission_">Transmission :</label>
+                                            <input type="text" class="form-control" id="transmission_" name="transmission_" required>
+                                        </div>
+                                        <div class="form-group py-2">
+                                            <label for="seating_capacity_">Seating Capacity :</label>
+                                            <input type="text" class="form-control" id="seating_capacity_" name="seating_capacity_" required>
+                                        </div>
+                                        <div class="form-group py-2">
+                                            <label for="vehicle_type_">Vehicle Type :</label>
+                                            <input type="text" class="form-control" id="vehicle_type_" name="vehicle_type_" required>
+                                        </div>
+                                        <div class="form-group py-2">
+                                            <label for="rental_price_">Rental Price(/Day) :</label>
+                                            <input type="text" class="form-control" id="rental_price_" name="rental_price_" required>
+                                        </div>
+                                        <div class="form-group py-2">
+                                            <label for="registration_number_">Registration number :</label>
+                                            <input type="text" class="form-control" id="registration_number_" name="registration_number_" required>
+                                        </div>
+                                        <div class="form-group py-2">
+                                            <label for="color_">Color :</label>
+                                            <input type="text" class="form-control" id="color_" name="color_" required>
+                                        </div>
+                                        <div class="form-group py-3">
+                                            <label for="location_">Location:</label>
+                                            <select class="form-control" id="location_" name="location_" required>
+                                                <option value="">-----Choose a location-----</option>
+                                                {% for i in location_list %}
+                                                    <option value={{ i['location_id'] }}>{{ i['city'] }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                        <div class="form-group py-2" id="show_image">
+                                            <label for="file">Change Image :</label>
+                                            <input type="file" name="file" id="fileInput" accept="image/*">
+                                        </div>
+                                        <div id="imagePreview"></div>
+                                        <input type="hidden" id="car_id" name="car_id" value="">
+                                        <img id="box_img" src="#" class="img-fluid product-img" alt="No Picture yet." style="height: 300px;">
+                                        <button type="submit" class="btn btn-primary">Submit</button>
+                                        <a class="btn btn-danger" id="delete_data" onclick="confirmDelete()">Delete</a>
+                                    </form>
+                                {% else %}
+                                    <img id="box_img" src="#" class="img-fluid product-img" alt="No Picture yet." style="height: 300px;">
+                                    <h5 id="car_tittle"></h5>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <p id="fuel_type"></p>
+                                            <p id="transmission"></p>
+                                            <p id="seating_capacity"></p>
+                                            <p id="vehicle_type"></p>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <p id="rental_price"></p>
+                                            <p id="registration_number"></p>
+                                            <p id="color"></p>
+                                            <p id="location"></p>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block myjs %}
+    <script>
+        const modal = document.getElementById('exampleModal');
+        modal.addEventListener('shown.bs.modal', function () {
+        });
+
+        const box_img = document.getElementById('box_img');
+        const car_tittle = document.getElementById('car_tittle');
+        const fuel_type = document.getElementById('fuel_type');
+        const transmission = document.getElementById('transmission');
+        const vehicle_type = document.getElementById('vehicle_type');
+        const seating_capacity = document.getElementById('seating_capacity');
+        const rental_price = document.getElementById('rental_price');
+        const registration_number = document.getElementById('registration_number');
+        const color = document.getElementById('color');
+        const location_ = document.getElementById('location');
+
+        const car_id = document.getElementById('car_id');
+        const brand_ = document.getElementById('brand_');
+        const model_ = document.getElementById('model_');
+        const year_ = document.getElementById('year_');
+        const fuel_type_ = document.getElementById('fuel_type_');
+        const transmission_ = document.getElementById('transmission_');
+        const vehicle_type_ = document.getElementById('vehicle_type_');
+        const seating_capacity_ = document.getElementById('seating_capacity_');
+        const rental_price_ = document.getElementById('rental_price_');
+        const registration_number_ = document.getElementById('registration_number_');
+        const color_ = document.getElementById('color_');
+        const locations = document.getElementById('location_');
+        const car_list = JSON.parse('{{ car_list|tojson }}');
+
+        function openModal(i){
+            car_tittle.innerText = car_list[i]['year'] + " " + car_list[i]['brand'] + " " + car_list[i]['model'];
+            fuel_type.innerText = "Fuel type : " + car_list[i]['fuel_type']
+            transmission.innerText = "Transmission : " + car_list[i]['transmission']
+            vehicle_type.innerText = "Vehicle Type : " + car_list[i]['vehicle_type']
+            seating_capacity.innerText = "Seating Capacity : " + car_list[i]['seating_capacity']
+            rental_price.innerText = "Rental Price : " + car_list[i]['rental_price'] + " / Day"
+            registration_number.innerText = "Registration number : " + car_list[i]['registration_number']
+            color.innerText = "Color : " + car_list[i]['color']
+            location_.innerText = "Location : " + car_list[i]['city']
+            box_img.src = car_list[i]['image_url']
+        }
+        function openModal_(i){
+            brand_.value = car_list[i]['brand']
+            model_.value = car_list[i]['model']
+            year_.value = car_list[i]['year']
+            fuel_type_.value = car_list[i]['fuel_type']
+            transmission_.value = car_list[i]['transmission']
+            vehicle_type_.value = car_list[i]['vehicle_type']
+            seating_capacity_.value = car_list[i]['seating_capacity']
+            rental_price_.value = car_list[i]['rental_price']
+            registration_number_.value = car_list[i]['registration_number']
+            color_.value = car_list[i]['color']
+            locations.value = car_list[i]['location_id']
+            box_img.src = car_list[i]['image_url']
+            car_id.value = car_list[i]['car_id']
+        }
+
+        function showLink(){
+            brand_.value = ''
+            model_.value = ''
+            year_.value = ''
+            fuel_type_.value = ''
+            transmission_.value = ''
+            vehicle_type_.value = ''
+            seating_capacity_.value = ''
+            rental_price_.value = ''
+            registration_number_.value = ''
+            color_.value = ''
+            locations.value = ''
+            box_img.style.display = 'none';
+            car_id.value = ''
+            document.getElementById('fileInput').value = '';
+            document.getElementById('imagePreview').innerHTML = '';
+        }
+        function confirmDelete() {
+            const result = confirm("You sure you want to delete it?");
+            if (result) {
+                window.location.href = "/deleteCar?car_id=" + car_id.value;
+            }
+        }
+        document.getElementById('fileInput').addEventListener('change', function () {
+            box_img.style.display = 'none';
+            const file = this.files[0];
+            const reader = new FileReader();
+            reader.onload = function (event) {
+                const imageDataUrl = event.target.result;
+                const previewImage = document.createElement('img');
+                previewImage.src = imageDataUrl;
+                previewImage.style.maxWidth = '300px';
+                previewImage.style.maxHeight = '300px';
+                const imagePreviewDiv = document.getElementById('imagePreview');
+                imagePreviewDiv.innerHTML = '';
+                imagePreviewDiv.appendChild(previewImage);
+            };
+            reader.readAsDataURL(file);
+        });
+        function validateForm(){
+            const namePattern = /^[a-zA-Z]+$/;
+            const numberPattern1 = /^[0-9]+(\.[0-9]{1,2})?$/;
+            const numberPattern2 = /^[0-9]+$/;
+            const numberPattern3 = /^[0-9a-zA-Z]+$/;
+
+            if (!namePattern.test(fuel_type_.value)) {
+                alert("Please enter only letters.");
+                return false;
+            }
+            if (!namePattern.test(transmission_.value)) {
+                alert("Please enter only letters.");
+                return false;
+            }
+            if (!namePattern.test(vehicle_type_.value)) {
+                alert("Please enter only letters.");
+                return false;
+            }
+            if (!namePattern.test(color_.value)) {
+                alert("Please enter only letters.");
+                return false;
+            }
+            if (!numberPattern2.test(year_.value)) {
+                alert("Please enter correct value.");
+                return false;
+            }
+            if (!numberPattern2.test(seating_capacity_.value)) {
+                alert("Please enter correct value.");
+                return false;
+            }
+            if (!numberPattern1.test(rental_price_.value)) {
+                alert("Please enter correct value.");
+                return false;
+            }
+            if (!numberPattern3.test(registration_number_.value)) {
+                alert("Please enter correct value.");
+                return false;
+            }
+            return true;
+        }
+    </script>
+{% endblock %}
