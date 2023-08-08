@@ -9,41 +9,8 @@ Users can log in to the system and access their respective dashboards to perform
 This version focuses on providing different levels of access for different user roles, without the booking and rental functionalities.
 
 
-# Project structure:
-    .
-    ├── app.py
-    ├── check_pwd.py
-    ├── README.md
-    ├── requirements.txt
-    ├── static
-    │   └── images
-    │       ├── 718-spyder.jpg
-    │       ├── 2012-Toyota-Corolla.png
-    │       ├── 2014-Nissan-Murano.png
-    │       ├── 2018-chevrolet-impala.jpg
-    │       ├── Audi-A8.png
-    │       ├── benz-GLC.png
-    │       ├── BMW-iX3.png
-    │       ├── camaro22.jpeg
-    │       ├── github.svg
-    │       ├── ico.ico
-    │       ├── Porsche-Lineup.png
-    │       └── slider-ev1.jpg
-    └── templates
-        ├── admin_dashboard.html
-        ├── base.html
-        ├── car.html
-        ├── index.html
-        ├── jump.html
-        ├── login.html
-        ├── login_base.html
-        ├── register.html
-        ├── staff_dashboard.html
-        ├── user_detail.html
-        └── user_edit.html
 
-
-# Internet images:
+## Internet images:
 
 - Image `Porsche-Lineup.png`: Description of the image [ https://www.porscheontario.com/porsche-brochures/ ]
 - Image `slider-ev1.jpg`: Description of the image [ https://www.kia.com/in/our-vehicles/ev6/showroom.html ]
@@ -56,7 +23,30 @@ This version focuses on providing different levels of access for different user 
 - Image `2014-Nissan-Murano.png`: Description of the image [ https://www.motortrend.com/news/163-news130124-2014-nissan-mutaro-crosscabriolet-price/ ]
 - Image `2017-e-cabriolet.jpg`: Description of the image [ https://www.mercedes-benz-ottawa-downtown.ca/en/news/view/2017-mercedes-benz-convertible-models-summer-is-here-/33727 ]
 - Image `camaro22.jpeg`: Description of the image [ https://www.hemmings.com/auction/2018-chevrolet-camaro-768468/sold ]
+- Image `2017_Toyota_C-HR`: Description of the image [ https://en.wikipedia.org/wiki/Toyota_C-HR ]
+- Image `Honda_SUV_RS.jpg`: Description of the image [ https://en.wikipedia.org/wiki/Honda_WR-V ]
+- Image `2018_BMW_X1.jpg`: Description of the image [ https://en.wikipedia.org/wiki/BMW_X1 ]
+- Image `Chevrolet_Camaro.jpg`: Description of the image [ https://en.wikipedia.org/wiki/Chevrolet_Camaro ]
+- Image `Chevrolet_Captiva.jpg`: Description of the image [ https://en.wikipedia.org/wiki/Chevrolet_Captiva ]
+- Image `Chevrolet_Cobalt.jpg`: Description of the image [ https://en.wikipedia.org/wiki/Chevrolet_Cobalt ]
+- Image `2021_Honda_Accord.jpg`: Description of the image [ https://en.wikipedia.org/wiki/Honda_Accord ]
+- Image `BMW_M4_CS.jpg`: Description of the image [ https://en.wikipedia.org/wiki/BMW_M4 ]
+- Image `Toyota_Highlander.jpg`: Description of the image [ https://en.wikipedia.org/wiki/Toyota_Highlander ]
+- Image `2019_Kia_Rio.jpg`: Description of the image [ https://en.wikipedia.org/wiki/Kia_Rio#Fourth_generation_(2016) ]
 
 
-
-
+## Test account
+    Admin account:
+        admin/adminpassword
+    
+    Staff account:
+        staff1/staff1
+        staff2/staff2
+        staff3/staff3
+    
+    Customer account:
+        customer1/customer1
+        customer2/customer2
+        customer3/customer3
+        customer4/customer4
+        customer5/customer5

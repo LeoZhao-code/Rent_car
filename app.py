@@ -16,9 +16,10 @@ app = Flask(__name__)
 
 app.secret_key = 'aHn6Zb7MstRxC8vEoF2zG3B9wQjKl5YD'
 
-app.config['MYSQL_HOST'] = '13.239.32.219'
+
+app.config['MYSQL_HOST'] = '127.0.0.1'
 app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = 'qq584167495'
+app.config['MYSQL_PASSWORD'] = '12345678'
 app.config['MYSQL_DB'] = 'carrent'
 app.config['MYSQL_PORT'] = 3306
 
@@ -286,9 +287,9 @@ def edit_car():
             cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
             file = request.files['file']
             if file:
-                # /home/leozhao95/mysite2/static/image
                 filename = str(uuid.uuid4()) + '.jpg'
                 file.save(f"./static/image/{filename}")
+                # file.save(f"/home/leozhao95/mysite2/static/image/{filename}")
                 fileName = f"../static/image/{filename}"
                 if not car_id:
                     cursor.execute("""INSERT INTO Cars (brand, model, year, fuel_type, transmission, seating_capacity, 
@@ -358,18 +359,18 @@ def user_list():
             phoneNumber = request.form.get('phone_number')
             userID = request.form.get('userID')
             isStaff_ = request.form.get('isStaff')
-            cursor.execute('SELECT * FROM UserAccounts WHERE username = %s;', (username,))
-            account = cursor.fetchone()
-            if account:
-                msg = 'Username or Email already exists!'
-            elif not re.match(r'[^@]+@[^@]+\.[^@]+', email):
-                msg = 'Invalid email address!'
-            elif not re.match(r'[A-Za-z0-9]+', username):
-                msg = 'Username must contain only characters and numbers!'
-            else:
-                if not userID:
-                    password = request.form.get('password')
-                    password = check_pwd.set_password(password)
+            if not userID:
+                password = request.form.get('password')
+                password = check_pwd.set_password(password)
+                cursor.execute('SELECT * FROM UserAccounts WHERE username = %s;', (username,))
+                account = cursor.fetchone()
+                if account:
+                    msg = 'Username or Email already exists!'
+                elif not re.match(r'[^@]+@[^@]+\.[^@]+', email):
+                    msg = 'Invalid email address!'
+                elif not re.match(r'[A-Za-z0-9]+', username):
+                    msg = 'Username must contain only characters and numbers!'
+                else:
                     if isStaff_ == '0':
                         cursor.execute('INSERT INTO UserAccounts (username, email, password, is_staff) VALUES(%s, %s, %s, 1);', (username, email, password,))
                         mysql.connection.commit()
@@ -384,17 +385,17 @@ def user_list():
                         account = cursor.fetchone()
                         cursor.execute('INSERT INTO Customers (user_id, first_name, last_name, birthdate, address, phone_number) VALUES(%s, %s, %s, %s, %s, %s);', (account['user_id'], firstName, lastName, birthdate, address, phoneNumber))
                         mysql.connection.commit()
+            else:
+                if isStaff_ == '0':
+                    cursor.execute('UPDATE UserAccounts SET username = %s, email = %s WHERE user_id = %s;', (username, email, userID,))
+                    mysql.connection.commit()
+                    cursor.execute('UPDATE Staff SET first_name = %s, last_name = %s, birthdate = %s, address = %s, phone_number = %s WHERE user_id = %s;', (firstName, lastName, birthdate, address, phoneNumber, userID,))
+                    mysql.connection.commit()
                 else:
-                    if isStaff_ == '0':
-                        cursor.execute('UPDATE UserAccounts SET username = %s, email = %s WHERE user_id = %s;', (username, email, userID,))
-                        mysql.connection.commit()
-                        cursor.execute('UPDATE Staff SET first_name = %s, last_name = %s, birthdate = %s, address = %s, phone_number = %s WHERE user_id = %s;', (firstName, lastName, birthdate, address, phoneNumber, userID,))
-                        mysql.connection.commit()
-                    else:
-                        cursor.execute('UPDATE UserAccounts SET username = %s, email = %s WHERE user_id = %s;', (username, email, userID,))
-                        mysql.connection.commit()
-                        cursor.execute('UPDATE Customers SET first_name = %s, last_name = %s, birthdate = %s, address = %s, phone_number = %s WHERE user_id = %s;', (firstName, lastName, birthdate, address, phoneNumber, userID,))
-                        mysql.connection.commit()
+                    cursor.execute('UPDATE UserAccounts SET username = %s, email = %s WHERE user_id = %s;', (username, email, userID,))
+                    mysql.connection.commit()
+                    cursor.execute('UPDATE Customers SET first_name = %s, last_name = %s, birthdate = %s, address = %s, phone_number = %s WHERE user_id = %s;', (firstName, lastName, birthdate, address, phoneNumber, userID,))
+                    mysql.connection.commit()
         staffList = None
         if isSuperuser == 1:
             cursor.execute('SELECT * FROM Staff AS S LEFT JOIN UserAccounts AS U ON S.user_id=U.user_id')

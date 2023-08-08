@@ -20,26 +20,8 @@
             text-align: center;
         }
 
-
-        .one-layout {
-            display: flex;
-        }
-
-        .big-box {
-            display: flex;
-            flex: 1;
-            margin-right: 10px;
-        }
-
-        .small-boxes {
-            display: flex;
-            flex-wrap: wrap;
-        }
-
         .big-image-box {
             position: relative;
-            width: 600px;
-            height: 425px;
             border: 1px solid #ccc;
             overflow: hidden;
             border-radius: 5px;
@@ -49,8 +31,6 @@
 
         .small-image-box {
             position: relative;
-            width: 300px;
-            height: 200px;
             border: 1px solid #ccc;
             overflow: hidden;
             border-radius: 5px;
@@ -82,8 +62,6 @@
             right: 0;
             text-align: right;
         }
-
-
 
         .question {
             font-family: Arial, sans-serif;
@@ -182,45 +160,57 @@
                 <h1>Popular model recommendation</h1>
             </div>
         </div>
-        <div class="one-layout">
-            <div class="big-box py-4">
-                <a href="{{ url_for('car_list') }}?search=KIAEV-6">
-                    <div class="big-image-box">
-                        <img src="../static/image/slider-ev1.jpg" class="img-fluid product-img">
-                        <div class="caption-left">2023 KIA</div>
-                        <div class="caption-right">EV-6</div>
-                    </div>
-                </a>
+        <div class="row">
+            <div class="col-6">
+                <div class="py-4">
+                    <a href="{{ url_for('car_list') }}?search=KIAEV-6">
+                        <div class="big-image-box">
+                            <img src="../static/image/slider-ev1.jpg" class="img-fluid product-img">
+                            <div class="caption-left">2023 KIA</div>
+                            <div class="caption-right">EV-6</div>
+                        </div>
+                    </a>
+                </div>
             </div>
-            <div class="small-boxes p-3">
-                <a href="{{ url_for('car_list') }}?search=Porsche718" class="p-2">
-                    <div class="small-image-box">
-                        <img src="../static/image/718-spyder.jpg" class="img-fluid product-img">
-                        <div class="caption-left">2023 Porsche</div>
-                        <div class="caption-right">718</div>
+            <div class="col-6">
+                <div class="row">
+                    <div class="col-6 pt-4">
+                        <a href="{{ url_for('car_list') }}?search=Porsche718">
+                            <div class="small-image-box">
+                                <img src="../static/image/718-spyder.jpg" class="img-fluid product-img">
+                                <div class="caption-left">2023 Porsche</div>
+                                <div class="caption-right">718</div>
+                            </div>
+                        </a>
+                        <div class="pt-2">
+                            <a href="{{ url_for('car_list') }}?search=BenzGLC">
+                                <div class="small-image-box">
+                                    <img src="../static/image/benz-GLC.png" class="img-fluid product-img">
+                                    <div class="caption-left">2023 Benz</div>
+                                    <div class="caption-right">GLC</div>
+                                </div>
+                            </a>
+                        </div>
                     </div>
-                </a>
-                <a href="{{ url_for('car_list') }}?search=BenzGLC" class="p-2">
-                    <div class="small-image-box">
-                        <img src="../static/image/benz-GLC.png" class="img-fluid product-img">
-                        <div class="caption-left">2023 Benz</div>
-                        <div class="caption-right">GLC</div>
+                    <div class="col-6 pt-4">
+                        <a href="{{ url_for('car_list') }}?search=BMWiX3">
+                            <div class="small-image-box">
+                                <img src="../static/image/BMW-iX3.png" class="img-fluid product-img">
+                                <div class="caption-left">2023 BMW</div>
+                                <div class="caption-right">iX3</div>
+                            </div>
+                        </a>
+                        <div class="pt-2">
+                            <a href="{{ url_for('car_list') }}?search=AudiA8">
+                                <div class="small-image-box">
+                                    <img src="../static/image/Audi-A8.png" class="img-fluid product-img">
+                                    <div class="caption-left">2023 Audi</div>
+                                    <div class="caption-right">A8</div>
+                                </div>
+                            </a>
+                        </div>
                     </div>
-                </a>
-                <a href="{{ url_for('car_list') }}?search=BMWiX3" class="p-2">
-                    <div class="small-image-box">
-                        <img src="../static/image/BMW-iX3.png" class="img-fluid product-img">
-                        <div class="caption-left">2023 BMW</div>
-                        <div class="caption-right">iX3</div>
-                    </div>
-                </a>
-                <a href="{{ url_for('car_list') }}?search=AudiA8" class="p-2">
-                    <div class="small-image-box">
-                        <img src="../static/image/Audi-A8.png" class="img-fluid product-img">
-                        <div class="caption-left">2023 Audi</div>
-                        <div class="caption-right">A8</div>
-                    </div>
-                </a>
+                </div>
             </div>
         </div>
     </div>
