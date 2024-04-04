@@ -9,6 +9,7 @@ RUN pip install -r requirements.txt
 
 COPY . .
 
+RUN test -f mydatabase.db && rm mydatabase.db || true
 RUN sqlite3 mydatabase.db < database/sqlite_database.sql
 
 ENV FLASK_APP app
