@@ -1,4 +1,4 @@
-FROM python:3.9
+FROM python:3.8-slim-buster
 
 WORKDIR /app
 
@@ -15,3 +15,6 @@ RUN sqlite3 mydatabase.db < database/sqlite_database.sql
 ENV FLASK_APP app
 
 CMD ["flask", "run", "-h", "0.0.0.0", "-p", "5000"]
+
+#docker build -t car_rent_demo:1.0 .
+#docker run --name demoflask -itd -p 5000:5000 car_rent_demo:1.0
